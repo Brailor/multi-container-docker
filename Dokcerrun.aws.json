@@ -1,0 +1,34 @@
+{
+  "AWSEBDockerrunVersion": 2,
+  "containerDefinitions": [
+    {
+      "name": "frontend",
+      "image": "brailor/multi-frontend:latest",
+      "hostname": "frontend",
+      "essential": false
+    },
+    {
+      "name": "worker",
+      "image": "brailor/multi-worker:latest",
+      "essential": false
+    },
+    {
+      "name": "server",
+      "image": "brailor/multi-server:latest",
+      "hostname": "api",
+      "essential": false
+    },
+    {
+      "name": "nginx",
+      "image": "brailor/multi-nginx:latest",
+      "essential": true,
+      "portMappings": [
+        {
+          "hostPort": 80,
+          "containerPort": 80
+        }
+      ],
+      "links": ["frontend", "server"]
+    }
+  ]
+}
