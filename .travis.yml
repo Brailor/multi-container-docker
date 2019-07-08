@@ -4,20 +4,20 @@ services:
   - docker
 
 before_install: 
-  - docker build -t brailor/react-test -f ./client/Dockerfile.dev ./client
+  - docker build -t brailor/react-test -f ./frontend/Dockerfile.dev ./frontend
 
 script:
   - docker run brailor/react-test npm test
 
 after_success:
-  - docker build -t brailor/multi-client ./client
+  - docker build -t brailor/multi-frontend ./frontend
   - docker build -t brailor/multi-nginx ./nginx
   - docker build -t brailor/multi-server ./server
   - docker build -t brailor/multi-worker ./worker
   # Log in to docker CLI
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
   # Push images to docker hub
-  - docker push brailor/multi-client
+  - docker push brailor/multi-frontend
   - docker push brailor/multi-nginx
   - docker push brailor/multi-server
   - docker push brailor/multi-worker

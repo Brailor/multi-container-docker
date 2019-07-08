@@ -35,13 +35,13 @@ services:
       - postgres
       - nginx
   
-  client:
+  frontend:
     build:
       dockerfile: Dockerfile.dev
-      context: ./client
+      context: ./frontend
     volumes: 
       - /app/node_modules
-      - ./client:/app
+      - ./frontend:/app
     depends_on: 
       - api
   
