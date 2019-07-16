@@ -2,12 +2,12 @@ version: '3'
 
 services:
   nginx:
-    image: 'brailor/multi-nginx:1.0.0'
+    build: 
+      dockerfile: Dockerfile.dev
+      context: ./nginx
     restart: always
     ports: 
       - '3050:80'
-    depends_on: 
-      - api
 
   postgres:
     image: 'postgres:latest'
@@ -16,7 +16,12 @@ services:
     image: 'redis:latest'
 
   api:
-    image: 'brailor/multi-server:latest'
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./server
+    volumes: 
+      - /app/node_modules
+      - ./server:/app
     environment:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
@@ -28,12 +33,25 @@ services:
     depends_on: 
       - redis
       - postgres
+      - nginx
   
   frontend:
-    image: 'brailor/multi-frontend:1.0.0'
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./frontend
+    volumes: 
+      - /app/node_modules
+      - ./frontend:/app
+    depends_on: 
+      - api
   
   worker:
-    image: 'brailor/multi-worker:latest' 
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./worker
+    volumes: 
+      - /app/node_modules
+      - ./worker:/app
     environment:
       - REDIS_HOST=redis
       - REDIS_PORT=6379

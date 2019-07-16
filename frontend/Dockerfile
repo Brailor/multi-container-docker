@@ -2,19 +2,20 @@ FROM node:alpine as builder
 
 WORKDIR /app
 
-COPY ./package.json ./
+COPY ./package*.json ./
 
-RUN npm install
+RUN npm ci
 
 COPY ./ ./
 
 RUN npm run build
 
 
-FROM node:alpine
+FROM nginx
 
-RUN npm install -g serve
+EXPOSE 3000
 
-COPY --from=builder /app/build /app/serve
+COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
 
-CMD ["serve", "-s", "-p", "3000", "/app/serve"]
+COPY --from=builder /app/build /usr/share/nginx/html
+
